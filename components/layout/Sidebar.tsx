@@ -1,16 +1,13 @@
 "use client"
 
-import { Button } from "@/app/inventory-management/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Home, Plus, Package } from "lucide-react"
-import { Page } from "@/types"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
-export default function Sidebar({
-  currentPage,
-  setCurrentPage,
-}: {
-  currentPage: Page
-  setCurrentPage: (page: Page) => void
-}) {
+export default function Sidebar() {
+  const pathname = usePathname()
+
   return (
     <div className="w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white p-6 min-h-screen border-r border-slate-700/50 backdrop-blur-xl">
       <div className="mb-10">
@@ -29,20 +26,20 @@ export default function Sidebar({
         <SidebarButton
           label="Dashboard"
           icon={<Home className="w-5 h-5 mr-3" />}
-          active={currentPage === "dashboard"}
-          onClick={() => setCurrentPage("dashboard")}
+          active={pathname === "/dashboard"}
+          href="/dashboard"
         />
         <SidebarButton
           label="New Sale Entry"
           icon={<Plus className="w-5 h-5 mr-3" />}
-          active={currentPage === "new-sale"}
-          onClick={() => setCurrentPage("new-sale")}
+          active={pathname === "/orders"}
+          href="/orders"
         />
         <SidebarButton
           label="Manage Inventory"
           icon={<Package className="w-5 h-5 mr-3" />}
-          active={currentPage === "manage-inventory"}
-          onClick={() => setCurrentPage("manage-inventory")}
+          active={pathname === "/products"}
+          href="/products"
         />
       </nav>
 
@@ -63,25 +60,26 @@ function SidebarButton({
   label,
   icon,
   active,
-  onClick,
+  href,
 }: {
   label: string
   icon: React.ReactNode
   active: boolean
-  onClick: () => void
+  href: string
 }) {
   return (
-    <Button
-      variant={active ? "secondary" : "ghost"}
-      className={`w-full justify-start h-12 text-left transition-all duration-200 ${
-        active
-          ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30 shadow-lg"
-          : "text-slate-300 hover:text-white hover:bg-white/10 border-transparent"
-      }`}
-      onClick={onClick}
-    >
-      {icon}
-      {label}
-    </Button>
+    <Link href={href}>
+      <Button
+        variant={active ? "secondary" : "ghost"}
+        className={`w-full justify-start h-12 text-left transition-all duration-200 ${
+          active
+            ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30 shadow-lg"
+            : "text-slate-300 hover:text-white hover:bg-white/10 border-transparent"
+        }`}
+      >
+        {icon}
+        {label}
+      </Button>
+    </Link>
   )
 }

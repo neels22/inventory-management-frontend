@@ -1,8 +1,8 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/app/inventory-management/components/ui/card"
-import { Input } from "@/app/inventory-management/components/ui/input"
-import { Button } from "@/app/inventory-management/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { Search, Package, Edit, Trash2 } from "lucide-react"
 import { Sale } from "@/types"
 import { useState } from "react"

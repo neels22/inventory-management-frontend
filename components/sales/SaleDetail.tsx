@@ -1,10 +1,10 @@
 "use client"
 
-import { Badge } from "@/app/inventory-management/components/ui/badge"
-import { Button } from "@/app/inventory-management/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/app/inventory-management/components/ui/card"
-import { Input } from "@/app/inventory-management/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/inventory-management/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Plus, Edit, Trash2, Search } from "lucide-react"
 import { SaleProduct } from "@/types"
 

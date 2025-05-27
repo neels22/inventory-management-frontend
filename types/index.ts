@@ -18,9 +18,13 @@ export interface SaleProduct {
 export interface Product {
   id: number
   name: string
-  shortName: string
+  shortname: string
+  barcode: string
   quantity: number
   price: number
   discount: number
-  barcode: string
+  threshold: number
+  location: string
+  category: string
+  brand: string
 }

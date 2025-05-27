@@ -1,14 +1,57 @@
 "use client"
 
-import { Badge } from "@/app/inventory-management/components/ui/badge"
-import { Button } from "@/app/inventory-management/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/app/inventory-management/components/ui/card"
-import { Input } from "@/app/inventory-management/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/inventory-management/components/ui/table"
-import { Search, Edit, Trash2 } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Search, Edit, Trash2, Plus } from "lucide-react"
 import { Product } from "@/types"
+import { useEffect, useState } from "react"
+import { authenticatedFetch } from "@/lib/auth"
+import { useRouter } from "next/navigation"
 
-export default function InventoryList({ products }: { products: Product[] }) {
+export default function InventoryList() {
+  const router = useRouter()
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await authenticatedFetch('http://127.0.0.1:8000/api/v1/products/?skip=0&limit=100')
+        if (!response.ok) {
+          throw new Error('Failed to fetch products')
+        }
+        const data = await response.json()
+        setProducts(data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        <p className="text-slate-600">Loading products...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        <p className="text-red-600">Error: {error}</p>
+      </div>
+    )
+  }
+
   return (
     <div className="p-8 bg-gradient-to-br from-slate-50 via-white to-slate-100 min-h-screen">
       <div className="mb-8 flex items-center justify-between">
@@ -18,6 +61,13 @@ export default function InventoryList({ products }: { products: Product[] }) {
           </h2>
           <p className="text-slate-600 text-lg">Manage your product inventory and stock levels</p>
         </div>
+        <Button 
+          onClick={() => router.push('/add-product')}
+          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Product
+        </Button>
       </div>
 
       <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
@@ -54,13 +104,13 @@ export default function InventoryList({ products }: { products: Product[] }) {
                   <TableCell className="font-semibold text-slate-800">{product.name}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={product.quantity < 20 ? "destructive" : "secondary"}
-                      className={product.quantity < 20 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}
+                      variant={product.quantity < product.threshold ? "destructive" : "secondary"}
+                      className={product.quantity < product.threshold ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}
                     >
                       {product.quantity}
                     </Badge>
                   </TableCell>
-                  <TableCell className="font-medium text-slate-700">${product.price.toFixed(2)}</TableCell>
+                  <TableCell className="font-medium text-slate-700">${(product.price / 100).toFixed(2)}</TableCell>
                   <TableCell>
                     {product.discount > 0 ? (
                       <Badge className="bg-orange-100 text-orange-800">{product.discount}%</Badge>
@@ -71,7 +121,7 @@ export default function InventoryList({ products }: { products: Product[] }) {
                   <TableCell className="font-mono text-sm text-slate-600">{product.barcode}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className="border-slate-300 text-slate-600">
-                      {product.shortName}
+                      {product.shortname}
                     </Badge>
                   </TableCell>
                   <TableCell>
