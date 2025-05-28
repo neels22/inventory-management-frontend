@@ -32,9 +32,11 @@ export default function RecentSales({
     fetchSales()
   }, [])
 
-  const filteredSales = sales.filter((sale) =>
-    new Date(sale.date).toLocaleDateString().toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredSales = sales
+    .filter((sale) =>
+      new Date(sale.date).toLocaleDateString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   if (loading) {
     return (

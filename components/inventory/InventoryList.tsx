@@ -16,6 +16,30 @@ export default function InventoryList() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchResults, setSearchResults] = useState<Product[]>([])
+  const [isSearching, setIsSearching] = useState(false)
+
+  const handleDelete = async (productId: number) => {
+    if (!confirm('Are you sure you want to delete this product?')) {
+      return
+    }
+
+    try {
+      const response = await authenticatedFetch(`http://127.0.0.1:8000/api/v1/products/${productId}`, {
+        method: 'DELETE',
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete product')
+      }
+
+      // Remove the deleted product from the state
+      setProducts(products.filter(product => product.id !== productId))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    }
+  }
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -35,6 +59,29 @@ export default function InventoryList() {
 
     fetchProducts()
   }, [])
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query)
+    if (query.trim() === "") {
+      setSearchResults([])
+      setIsSearching(false)
+      return
+    }
+
+    setIsSearching(true)
+    try {
+      const response = await authenticatedFetch(`http://127.0.0.1:8000/api/v1/products/search/?q=${encodeURIComponent(query)}`)
+      if (!response.ok) {
+        throw new Error('Failed to search products')
+      }
+      const data = await response.json()
+      setSearchResults(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+    } finally {
+      setIsSearching(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -78,11 +125,40 @@ export default function InventoryList() {
               <Input
                 placeholder="Search products..."
                 className="pl-10 border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 bg-white/50"
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
               />
+              {isSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
+                </div>
+              )}
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
+          {searchResults.length > 0 && (
+            <div className="absolute z-10 w-full max-w-md mt-1 bg-white rounded-lg shadow-lg border border-slate-200">
+              <div className="p-2">
+                {searchResults.map((product) => (
+                  <div
+                    key={product.id}
+                    className="p-2 hover:bg-slate-50 rounded-md cursor-pointer"
+                    onClick={() => {
+                      setSearchQuery("")
+                      setSearchResults([])
+                      // You can add navigation or other actions here
+                    }}
+                  >
+                    <div className="font-semibold text-slate-800">{product.name}</div>
+                    <div className="text-sm text-slate-600">
+                      <span className="font-mono">{product.barcode}</span> • {product.quantity} in stock
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <Table>
             <TableHeader>
               <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
@@ -129,7 +205,12 @@ export default function InventoryList() {
                       <Button variant="outline" size="sm" className="border-blue-200 text-blue-600 hover:bg-blue-50">
                         <Edit className="w-3 h-3" />
                       </Button>
-                      <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="border-red-200 text-red-600 hover:bg-red-50"
+                        onClick={() => handleDelete(product.id)}
+                      >
                         <Trash2 className="w-3 h-3" />
                       </Button>
                     </div>
