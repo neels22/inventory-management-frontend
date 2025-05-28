@@ -109,7 +109,7 @@ export default function InventoryList() {
           <p className="text-slate-600 text-lg">Manage your product inventory and stock levels</p>
         </div>
         <Button 
-          onClick={() => router.push('/add-product')}
+          onClick={() => router.push('/products/add')}
           className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />

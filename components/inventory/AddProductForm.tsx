@@ -54,7 +54,7 @@ export default function AddProductForm() {
       }
 
       toast.success('Product added successfully')
-      router.push('/inventory-management/manage-inventory')
+      router.push('/products')
     } catch (error) {
       toast.error('Failed to add product')
       console.error('Error adding product:', error)
