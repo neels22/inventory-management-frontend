@@ -1,12 +1,19 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Package, AlertTriangle, TrendingUp } from "lucide-react"
+import { Package, AlertTriangle, TrendingUp, DollarSign, ShoppingCart } from "lucide-react"
 
 export default function DashboardStats({
   stats,
 }: {
-  stats: { totalInventory: number; lowStock: number; totalSales: number }
+  stats: {
+    totalInventory?: number
+    lowStock?: number
+    totalSales?: number
+    totalProducts?: number
+    totalSalesValue?: number
+    outOfStock?: number
+  }
 }) {
   return (
     <div className="p-8">
@@ -19,16 +26,42 @@ export default function DashboardStats({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
         <StatCard
-          title="Total Inventory"
-          value={stats.totalInventory.toLocaleString()}
-          subtitle="Products in stock"
+          title="Total Products"
+          value={(stats.totalProducts ?? 0).toLocaleString()}
+          subtitle="Products in system"
           icon={<Package className="h-5 w-5 text-white" />}
           color="from-blue-500 to-blue-600"
           progress="w-3/4"
         />
+        {/* <StatCard
+          title="Total Inventory"
+          value={(stats.totalInventory ?? 0).toLocaleString()}
+          subtitle="Items in stock"
+          icon={<ShoppingCart className="h-5 w-5 text-white" />}
+          color="from-purple-500 to-purple-600"
+          progress="w-3/4"
+        /> */}
+        <StatCard
+          title="Total Sales"
+          value={stats.totalSales ?? 0}
+          subtitle="This month"
+          icon={<TrendingUp className="h-5 w-5 text-white" />}
+          color="from-green-500 to-emerald-600"
+          progress="w-2/3"
+          valueColor="text-green-600"
+        />
+        <StatCard
+          title="Sales Value"
+          value={`$${(stats.totalSalesValue ?? 0).toLocaleString()}`}
+          subtitle="Total revenue"
+          icon={<DollarSign className="h-5 w-5 text-white" />}
+          color="from-yellow-500 to-yellow-600"
+          progress="w-2/3"
+          valueColor="text-yellow-600"
+        />
         <StatCard
           title="Low Stock Alert"
-          value={stats.lowStock}
+          value={stats.lowStock ?? 0}
           subtitle="Below threshold"
           icon={<AlertTriangle className="h-5 w-5 text-white" />}
           color="from-orange-500 to-red-500"
@@ -36,13 +69,13 @@ export default function DashboardStats({
           valueColor="text-orange-600"
         />
         <StatCard
-          title="Total Sales"
-          value={stats.totalSales}
-          subtitle="This month"
-          icon={<TrendingUp className="h-5 w-5 text-white" />}
-          color="from-green-500 to-emerald-600"
-          progress="w-2/3"
-          valueColor="text-green-600"
+          title="Out of Stock"
+          value={stats.outOfStock ?? 0}
+          subtitle="Items to restock"
+          icon={<AlertTriangle className="h-5 w-5 text-white" />}
+          color="from-red-500 to-red-600"
+          progress="w-1/4"
+          valueColor="text-red-600"
         />
       </div>
     </div>

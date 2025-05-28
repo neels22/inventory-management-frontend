@@ -162,6 +162,7 @@ export default function InventoryList() {
           <Table>
             <TableHeader>
               <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+                <TableHead className="font-semibold text-slate-700 w-16">#</TableHead>
                 <TableHead className="font-semibold text-slate-700">Product Name</TableHead>
                 <TableHead className="font-semibold text-slate-700">Stock</TableHead>
                 <TableHead className="font-semibold text-slate-700">Price</TableHead>
@@ -172,11 +173,12 @@ export default function InventoryList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products.map((product) => (
+              {products.map((product, index) => (
                 <TableRow
                   key={product.id}
                   className="hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-purple-50/30 transition-colors duration-200"
                 >
+                  <TableCell className="text-slate-500 font-medium">{index + 1}</TableCell>
                   <TableCell className="font-semibold text-slate-800">{product.name}</TableCell>
                   <TableCell>
                     <Badge
