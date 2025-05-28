@@ -50,6 +50,9 @@ export default function LoginPage() {
       // Store the token using our auth utility
       setToken(data.access_token)
       
+      // Dispatch auth state change event
+      window.dispatchEvent(new Event('auth-state-changed'))
+      
       // Redirect to the inventory management page
       router.push("/dashboard")
     } catch (err) {
