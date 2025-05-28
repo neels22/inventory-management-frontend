@@ -5,20 +5,46 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search, Package, Edit, Trash2 } from "lucide-react"
 import { Sale } from "@/types"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function RecentSales({
-  sales,
   onEdit,
 }: {
-  sales: Sale[]
   onEdit: () => void
 }) {
   const [searchTerm, setSearchTerm] = useState("")
+  const [sales, setSales] = useState<Sale[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchSales = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/v1/sales/?skip=0&limit=100')
+        const data = await response.json()
+        setSales(data)
+      } catch (error) {
+        console.error('Error fetching sales:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSales()
+  }, [])
 
   const filteredSales = sales.filter((sale) =>
-    sale.date.toLowerCase().includes(searchTerm.toLowerCase())
+    new Date(sale.date).toLocaleDateString().toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  if (loading) {
+    return (
+      <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+        <CardContent className="p-6">
+          <p className="text-slate-600">Loading sales...</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
@@ -28,7 +54,7 @@ export default function RecentSales({
           <div className="relative flex-1 max-w-md">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
             <Input
-              placeholder="Search sales..."
+              placeholder="Search sales by date..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 bg-white/50"
@@ -49,16 +75,16 @@ export default function RecentSales({
                 </div>
                 <div>
                   <p className="font-semibold text-slate-800 group-hover:text-slate-900">
-                    Sale dated {sale.date}
+                    Sale dated {new Date(sale.date).toLocaleDateString()}
                   </p>
                   <p className="text-sm text-slate-500 mt-1">
                     <span className="inline-flex items-center gap-1">
                       <Package className="w-3 h-3" />
-                      {sale.products} products
+                      {sale.products.length} products
                     </span>
                     <span className="mx-2">•</span>
                     <span className="font-medium text-green-600">
-                      ${sale.amount.toFixed(2)}
+                      ${sale.total_price.toFixed(2)}
                     </span>
                   </p>
                 </div>

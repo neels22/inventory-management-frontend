@@ -3,8 +3,17 @@ export type Page = "dashboard" | "new-sale" | "sale-detail" | "manage-inventory"
 export interface Sale {
   id: number
   date: string
-  products: number
-  amount: number
+  total_price: number
+  products: {
+    product_id: number
+    quantity: number
+    id: number
+    sale_id: number
+    total: number
+    product_name: string
+    product_price: number
+    unit_price: number
+  }[]
 }
 
 export interface SaleProduct {
