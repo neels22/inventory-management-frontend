@@ -204,7 +204,12 @@ export default function InventoryList() {
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-1">
-                      <Button variant="outline" size="sm" className="border-blue-200 text-blue-600 hover:bg-blue-50">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                        onClick={() => router.push(`/products/edit/${product.id}`)}
+                      >
                         <Edit className="w-3 h-3" />
                       </Button>
                       <Button 
