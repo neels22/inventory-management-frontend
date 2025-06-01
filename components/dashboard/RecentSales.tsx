@@ -44,6 +44,16 @@ export default function RecentSales() {
   }, [])
 
   const filteredSales = sales
+    .filter((sale) => {
+      // Check if total price is greater than zero
+      const hasNonZeroTotal = sale.total_price > 0;
+      
+      // Check if any product has quantity greater than zero
+      const hasNonZeroProducts = sale.products.some(product => product.quantity > 0);
+      
+      // Include sale if either condition is true
+      return hasNonZeroTotal || hasNonZeroProducts;
+    })
     .filter((sale) =>
       new Date(sale.date).toLocaleDateString().toLowerCase().includes(searchTerm.toLowerCase())
     )
