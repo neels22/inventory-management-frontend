@@ -7,6 +7,7 @@ import { Search, Package, Edit, Trash2 } from "lucide-react"
 import { Sale } from "@/types"
 import { useState, useEffect } from "react"
 import { authenticatedFetch } from "@/lib/auth"
+import { useRouter } from "next/navigation"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,11 +19,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
-export default function RecentSales({
-  onEdit,
-}: {
-  onEdit: () => void
-}) {
+export default function RecentSales() {
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [sales, setSales] = useState<Sale[]>([])
   const [loading, setLoading] = useState(true)
@@ -138,7 +136,7 @@ export default function RecentSales({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={onEdit}
+                    onClick={() => router.push(`/sale/${sale.id}`)}
                     className="border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300"
                   >
                     <Edit className="w-4 h-4 mr-1" />
